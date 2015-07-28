@@ -93,11 +93,11 @@ def biKmeans(dataSet, k):
 	centroid = mean(dataSet, axis = 0).tolist()[0]  #列表中的第一个列表元素：即全部数据每个属性对应的均值
 	centList = [centroid]  #centList是[[xxx,xxx,xxx]]
 	for i in range(numSamples):  
-		clusterAssment[i, 1] = euclDistance(mat(centroid), dataSet[i, :])**2 #计算每个样本点与质心之间的距离 
+		clusterAssment[i, 1] = (euclDistance(mat(centroid), dataSet[i, :]))**2 #计算每个样本点与质心之间的距离 
   
-	while len(centList) < k:  
+	while (len(centList) < k):  
         # min sum of square error  
-		minSSE = 100000.0  
+		minSSE = inf 
 		numCurrCluster = len(centList)  #当前的簇数
         # for each cluster 
 		#找出numCurrCluster个簇中哪个簇分解得到的误差平方和最小的两个簇
@@ -110,7 +110,7 @@ def biKmeans(dataSet, k):
 			#centroids的元素为每个簇的质心
 			#splitClusterAssment第一列为样本所属的类别号，第二列为样本到其所属簇的质心的距离的平方
 			centroids, splitClusterAssment = kmeans(pointsInCurrCluster, 2)  
-  
+
             # step 4: calculate the sum of square error after split this cluster
 			#下面的代码是求误差平方和
 			#splitSSE=sum(power(splitClusterAssment[:,1],2))
@@ -118,14 +118,14 @@ def biKmeans(dataSet, k):
 			#不是标号为第i个簇的误差平方和
 			notSplitSSE = sum(clusterAssment[nonzero(clusterAssment[:, 0].A != i)[0], 1])  
 			currSplitSSE = splitSSE + notSplitSSE  #当前所有簇的平方和  
-  
+			print('num=%d,%s,%s,%s' %(i,splitSSE,notSplitSSE,currSplitSSE))
             # step 5: find the best split cluster which has the min sum of square error  
 			if currSplitSSE < minSSE:  #
 				minSSE = currSplitSSE  
 				bestCentroidToSplit = i  
-				bestNewCentroids = centroids.copy()  
+				bestNewCentroids = centroids  
 				bestClusterAssment = splitClusterAssment.copy()  
-  
+		print('minSSE=%s' %minSSE)
         # step 6: modify the cluster index for adding new cluster
 		#将新分出来的两个簇的标号一个沿用它父亲的标号，一个用簇的总数来标号。
 		bestClusterAssment[nonzero(bestClusterAssment[:, 0].A == 1)[0], 0] = numCurrCluster  
@@ -138,7 +138,7 @@ def biKmeans(dataSet, k):
   
         # step 8: update the index and error of the samples whose cluster have been changed
 		#由第i个簇分解为j、k两个簇所得到的数据将分解之前的数据替换掉
-		clusterAssment[nonzero(clusterAssment[:, 0].A == bestCentroidToSplit), :] = bestClusterAssment  
+		clusterAssment[nonzero(clusterAssment[:, 0].A == bestCentroidToSplit)[0], :] = bestClusterAssment  
   
 	print ('Congratulations, cluster using bi-kmeans complete!' ) 
 	return mat(centList), clusterAssment  
