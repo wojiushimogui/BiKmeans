@@ -8,9 +8,10 @@
 from numpy import *  
 import time  
 import matplotlib.pyplot as plt  
-  
+import biKMeans
+from biKMeans import *
 ## step 1: load data  
-print "step 1: load data..."  
+print ("step 1: load data..." ) 
 dataSet = []  
 fileIn = open('D:/xuepython/BiKmeans/testSet.txt')  
 for line in fileIn.readlines():  
@@ -18,11 +19,11 @@ for line in fileIn.readlines():
 	dataSet.append([float(lineArr[0]), float(lineArr[1])])  
   
 ## step 2: clustering...  
-print "step 2: clustering..."  
+print ("step 2: clustering...")  
 dataSet = mat(dataSet)  
 k = 4  
 centroids, clusterAssment = biKmeans(dataSet, k)  
   
 ## step 3: show the result  
-print "step 3: show the result..."  
+print ("step 3: show the result..."  )
 showCluster(dataSet, k, centroids, clusterAssment) 
